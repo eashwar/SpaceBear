@@ -1,7 +1,10 @@
-# Little-Blorb
+# Space Bear
 A 2D Platformer.
 
-This is a game featuring everybody's favorite purple blob, Little Blorb! Jump around and collect coins. Some blocks might even hide coins in them if you hit them from the bottom! But look out - the aliens are out to get Little Blorb. Avoid them and get to the exit!
+This is a game featuring the galaxy's fiercest fighter, Space Bear! Infiltrate the alien base and take down the mother ship. Good luck!
+
+
+Uses codeheart.js. More info at codeheartjs.com
 
 
 Credits:
