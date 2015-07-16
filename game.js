@@ -15,6 +15,9 @@ var left = 37;
 var right = 39;
 var shoot = 32;
 
+// The speed to pull the player down
+var gravity = 6000;
+
 // Booleans that track if our input is being pushed down
 var input = {
 	left: false,
@@ -29,11 +32,42 @@ var world = {
 }
 
 var level = {
-	level1: true,
+	prelevel1: true,
+	level1: false,
+	prelevel2: false,
 	level2: false,
+	prelevel3: false,
 	level3: false,
 	gameover: false
 }
+
+// All of the global arrays
+var platformArray = [];
+var coins = [];
+var enemies = [];
+
+// For loading the assets of each level
+var level1loaded = false;
+var level2loaded = false;
+var level3loaded = false;
+
+var prelevel1loaded = false;
+var prelevel1timer = 0;
+
+var prelevel2loaded = false;
+var prelevel2timer = 0;
+
+var prelevel3loaded = false;
+var prelevel3timer = 0;
+
+
+var lvl1playerset = false;
+var lvl2playerset = false;
+var lvl3playerset = false;
+
+//For ending each level
+var finishaddlevel1 = false;
+var enemieskilledlevel2 = false;
 
 // The player object and its properties
 var player = {
@@ -114,20 +148,6 @@ var player = {
 	movingRight: true,
 }
 
-// All of the global arrays
-var platformArray = [];
-var coins = [];
-var enemies = [];
-
-// For loading the assets of each level
-var level1loaded = false;
-var level2loaded = false;
-var level3loaded = false;
-
-//For ending each level
-var finishaddlevel1 = false;
-var enemieskilledlevel2 = false;
-
 
 // The coin object and its properties	
 var coinTemplate = {
@@ -164,120 +184,112 @@ var coinTemplate = {
 	},
 }
 
-var coinboxcounter = 0;
-
-function coin(platform)
-{
-	this.xPosition = platform.xPosition + 25;
-	this.yPosition = platform.yPosition - 150;
-}
-
 ////////////////////////////////////////////////////
 ///////////   LEVEL ONE COIN STUFF  ////////////////
 ////////////////////////////////////////////////////
 
-	var lvl1coin1 = {
-		xPosition: world.xPosition + 1050,
-		yPosition: world.yPosition + 100
-	}
-	var lvl1coin2 = {
-		xPosition: world.xPosition + 950,
-		yPosition: world.yPosition + 100
-	}
-	var lvl1coin3 = {
-		xPosition: world.xPosition + 850,
-		yPosition: world.yPosition + 100
-	}
-	var lvl1coin4 = {
-		xPosition: world.xPosition + 350,
-		yPosition: world.yPosition + 300
-	}
-	var lvl1coin5 = {
-		xPosition: world.xPosition + 450,
-		yPosition: world.yPosition + 300
-	}
-	var lvl1coin6 = {
-		xPosition: world.xPosition - 175,
-		yPosition: world.yPosition + 500
-	}
-	var lvl1coin7 = {
-		xPosition: world.xPosition - 75,
-		yPosition: world.yPosition + 500
-	}
-	var lvl1coin8 = {
-		xPosition: world.xPosition - 475,
-		yPosition: world.yPosition + 300
-	}
-	var lvl1coin9 = {
-		xPosition: world.xPosition - 375,
-		yPosition: world.yPosition + 300
-	}
-	var lvl1coin10 = {
-		xPosition: world.xPosition - 1475,
-		yPosition: world.yPosition + 100
-	}
-	var lvl1coin11 = {
-		xPosition: world.xPosition - 1375,
-		yPosition: world.yPosition + 100
-	}
-	var lvl1coin12 = {
-		xPosition: world.xPosition - 1275,
-		yPosition: world.yPosition + 100
-	}
-	var lvl1coin13 = {
-		xPosition: world.xPosition - 1175,
-		yPosition: world.yPosition + 100
-	}
-	var lvl1coin14 = {
-		xPosition: world.xPosition - 1075,
-		yPosition: world.yPosition + 100
-	}
-	var lvl1coin15 = {
-		xPosition: world.xPosition - 975,
-		yPosition: world.yPosition + 100
-	}
-	var lvl1coin16 = {
-		xPosition: world.xPosition + 4025,
-		yPosition: world.yPosition + 400
-	}
-	var lvl1coin17 = {
-		xPosition: world.xPosition + 4125,
-		yPosition: world.yPosition + 400
-	}
-	var lvl1coin18 = {
-		xPosition: world.xPosition + 4225,
-		yPosition: world.yPosition + 400
-	}
-	var lvl1coin19 = {
-		xPosition: world.xPosition + 4325,
-		yPosition: world.yPosition + 400
-	}
-	var lvl1coin20 = {
-		xPosition: world.xPosition + 4425,
-		yPosition: world.yPosition + 400
-	}
-	var lvl1coin21 = {
-		xPosition: world.xPosition + 4525,
-		yPosition: world.yPosition + 400
-	}
-	var lvl1coin22 = {
-		xPosition: world.xPosition + 4625,
-		yPosition: world.yPosition + 400
-	}
-	var lvl1coin23 = {
-		xPosition: world.xPosition + 4725,
-		yPosition: world.yPosition + 400
-	}
-	var lvl1coin24 = {
-		xPosition: world.xPosition + 4825,
-		yPosition: world.yPosition + 400
-	}
-	var lvl1coin25 = {
-		xPosition: world.xPosition + 4925,
-		yPosition: world.yPosition + 400
-	}
+var lvl1coin1 = {
+	xPosition: world.xPosition + 1050,
+	yPosition: world.yPosition + 100
+}
+var lvl1coin2 = {
+	xPosition: world.xPosition + 950,
+	yPosition: world.yPosition + 100
+}
+var lvl1coin3 = {
+	xPosition: world.xPosition + 850,
+	yPosition: world.yPosition + 100
+}
+var lvl1coin4 = {
+	xPosition: world.xPosition + 350,
+	yPosition: world.yPosition + 300
+}
+var lvl1coin5 = {
+	xPosition: world.xPosition + 450,
+	yPosition: world.yPosition + 300
+}
+var lvl1coin6 = {
+	xPosition: world.xPosition - 175,
+	yPosition: world.yPosition + 500
+}
+var lvl1coin7 = {
+	xPosition: world.xPosition - 75,
+	yPosition: world.yPosition + 500
+}
+var lvl1coin8 = {
+	xPosition: world.xPosition - 475,
+	yPosition: world.yPosition + 300
+}
+var lvl1coin9 = {
+	xPosition: world.xPosition - 375,
+	yPosition: world.yPosition + 300
+}
+var lvl1coin10 = {
+	xPosition: world.xPosition - 1475,
+	yPosition: world.yPosition + 100
+}
+var lvl1coin11 = {
+	xPosition: world.xPosition - 1375,
+	yPosition: world.yPosition + 100
+}
+var lvl1coin12 = {
+	xPosition: world.xPosition - 1275,
+	yPosition: world.yPosition + 100
+}
+var lvl1coin13 = {
+	xPosition: world.xPosition - 1175,
+	yPosition: world.yPosition + 100
+}
+var lvl1coin14 = {
+	xPosition: world.xPosition - 1075,
+	yPosition: world.yPosition + 100
+}
+var lvl1coin15 = {
+	xPosition: world.xPosition - 975,
+	yPosition: world.yPosition + 100
+}
+var lvl1coin16 = {
+	xPosition: world.xPosition + 4025,
+	yPosition: world.yPosition + 400
+}
+var lvl1coin17 = {
+	xPosition: world.xPosition + 4125,
+	yPosition: world.yPosition + 400
+}
+var lvl1coin18 = {
+	xPosition: world.xPosition + 4225,
+	yPosition: world.yPosition + 400
+}
+var lvl1coin19 = {
+	xPosition: world.xPosition + 4325,
+	yPosition: world.yPosition + 400
+}
+var lvl1coin20 = {
+	xPosition: world.xPosition + 4425,
+	yPosition: world.yPosition + 400
+}
+var lvl1coin21 = {
+	xPosition: world.xPosition + 4525,
+	yPosition: world.yPosition + 400
+}
+var lvl1coin22 = {
+	xPosition: world.xPosition + 4625,
+	yPosition: world.yPosition + 400
+}
+var lvl1coin23 = {
+	xPosition: world.xPosition + 4725,
+	yPosition: world.yPosition + 400
+}
+var lvl1coin24 = {
+	xPosition: world.xPosition + 4825,
+	yPosition: world.yPosition + 400
+}
+var lvl1coin25 = {
+	xPosition: world.xPosition + 4925,
+	yPosition: world.yPosition + 400
+}
 
-	var coinsLevel1 = [
+var coinsLevel1 = [
 		lvl1coin1,
 		lvl1coin2,
 		lvl1coin3,
@@ -304,22 +316,22 @@ function coin(platform)
 		lvl1coin24,
 		lvl1coin25
 	]
-////////////////////////////////////////////////////
-///////////  END LEVEL ONE COIN STUFF  /////////////
-////////////////////////////////////////////////////
+	////////////////////////////////////////////////////
+	///////////  END LEVEL ONE COIN STUFF  /////////////
+	////////////////////////////////////////////////////
 
 
 
 ////////////////////////////////////////////////////
 ///////////    LEVEL TWO COIN STUFF    /////////////
 ////////////////////////////////////////////////////
-	var lvl2coin1 = {
-		xPosition: world.xPosition + 1050,
-		yPosition: world.yPosition + 100
-	}
-	var coinsLevel2 = [
-		lvl2coin1
-	]
+var lvl2coin1 = {
+	xPosition: world.xPosition + 1050,
+	yPosition: world.yPosition + 100
+}
+var coinsLevel2 = [
+	lvl2coin1
+]
 
 ////////////////////////////////////////////////////
 ///////////  END LEVEL TWO COIN STUFF  /////////////
@@ -331,151 +343,175 @@ function coin(platform)
 ////////////////////////////////////////////////////
 
 
-	var coinsLevel3 = [
-	
-	]
+var coinsLevel3 = [
+
+]
 
 ////////////////////////////////////////////////////
 /////////// END LEVEL THREE COIN STUFF /////////////
 ////////////////////////////////////////////////////
 var coinBoxHit = false;
 var coinSound = loadSound("sounds/coin.mp3");
-// The speed to pull the player down
-var gravity = 6000;
+
+
+
+
+////////////////////////////////////////////////////////
+///////////    PRELEVEL PLATFORM STUFF    /////////////
+////////////////////////////////////////////////////////
+	var ground = {
+	name: "ground",
+	xPosition: world.xPosition,
+	yPosition: world.yPosition - 100,
+	width: 10000,
+	height: 100,
+	color: makeColor(0, 1, 0)
+}
+
+var prelevelplatformArray = [
+	ground
+]
+
+////////////////////////////////////////////////////////
+///////////  END PRELEVEL PLATFORM STUFF  /////////////
+////////////////////////////////////////////////////////
+
+
+
 ////////////////////////////////////////////////////////
 ///////////    LEVEL ONE PLATFORM STUFF    /////////////
 ////////////////////////////////////////////////////////
 // All of the platforms that appear in the first level
-	var ground = {
-		name: "ground",
-		xPosition: world.xPosition - 2000,
-		yPosition: world.yPosition + 1000,
-		width: 10000,
-		height: screenHeight,
-		color: makeColor(0, 1, 0)
-	}
-	var lvl1platform1 = {
-		name: "lvl1platform1",
-		xPosition: world.xPosition + 300,
+var ground = {
+	name: "ground",
+	xPosition: world.xPosition - 2000,
+	yPosition: world.yPosition + 1000,
+	width: 10000,
+	height: screenHeight,
+	color: makeColor(0, 1, 0)
+}
+var lvl1platform1 = {
+	name: "lvl1platform1",
+	xPosition: world.xPosition + 300,
+	yPosition: world.yPosition + 400,
+	width: 300,
+	height: 200,
+	color: makeColor(0.75, 0.4, 0.15)
+}
+var lvl1platform2 = {
+	name: "lvl1platform2",
+	xPosition: world.xPosition + 800,
+	yPosition: world.yPosition + 200,
+	width: 400,
+	height: 200,
+	color: makeColor(0.75, 0.4, 0.15)
+}
+var lvl1platform3 = {
+	name: "lvl1platform3",
+	xPosition: world.xPosition + 1560,
+	yPosition: world.yPosition + 700,
+	width: 200,
+	height: 100,
+	color: makeColor(1, 1, 0)
+}
+var lvl1platform4 = {
+	name: "lvl1platform4",
+	xPosition: world.xPosition - 200,
+	yPosition: world.yPosition + 600,
+	width: 200,
+	height: 100,
+	color: makeColor(1, 1, 0)
+}
+var lvl1platform5 = {
+	name: "lvl1platform5",
+	xPosition: world.xPosition - 500,
+	yPosition: world.yPosition + 400,
+	width: 200,
+	height: 100,
+	color: makeColor(1, 1, 0)
+}
+var lvl1platform6 = {
+	name: "lvl1platform6",
+	xPosition: world.xPosition - 1500,
+	yPosition: world.yPosition + 200,
+	width: 600,
+	height: 100,
+	color: makeColor(1, 1, 0)
+}
+var lvl1platform7 = {
+	name: "lvl1platform7",
+	xPosition: world.xPosition + 2300,
+	yPosition: world.yPosition + 500,
+	width: 400,
+	height: 100,
+	color: makeColor(1, 1, 0)
+}
+var lvl1platform8 = {
+	name: "lvl1platform8",
+	xPosition: world.xPosition + 2500,
+	yPosition: world.yPosition + 100,
+	width: 200,
+	height: 500,
+	color: makeColor(1, 1, 0)
+}
+var lvl1platform9 = {
+	name: "lvl1platform9",
+	xPosition: world.xPosition + 2700,
+	yPosition: world.yPosition + 300,
+	width: 200,
+	height: 100,
+	color: makeColor(1, 1, 0)
+}
+var lvl1platform10 = {
+	name: "lvl1platform10",
+	xPosition: world.xPosition + 3100,
+	yPosition: world.yPosition + 600,
+	width: 400,
+	height: 100,
+	color: makeColor(1, 1, 0)
+}
+var lvl1platform11 = {
+	name: "lvl1platform11",
+	xPosition: world.xPosition + 3300,
+	yPosition: world.yPosition + 200,
+	width: 200,
+	height: 400,
+	color: makeColor(1, 1, 0)
+}
+var lvl1platform12 = {
+	name: "lvl1platform12",
+	xPosition: world.xPosition + 4000,
+	yPosition: world.yPosition + 500,
+	width: 1000,
+	height: 100,
+	color: makeColor(1, 1, 0)
+}
+var lvl1platform13 = {
+	name: "lvl1platform13",
+	xPosition: world.xPosition + 4300,
+	yPosition: world.yPosition + 200,
+	width: 600,
+	height: 100,
+	color: makeColor(1, 1, 0)
+}
+var lvl1platform14 = {
+	name: "lvl1platform14",
+	xPosition: world.xPosition + 4200,
+	yPosition: world.yPosition + 200,
+	width: 200,
+	height: 100,
+	color: makeColor(1, 1, 0)
+}
+var finish = {
+		name: "finish",
+		xPosition: world.xPosition + 5500,
 		yPosition: world.yPosition + 400,
-		width: 300,
-		height: 200,
-		color: makeColor(0.75, 0.4, 0.15)
-	}
-	var lvl1platform2 = {
-		name: "lvl1platform2",
-		xPosition: world.xPosition + 800,
-		yPosition: world.yPosition + 200,
-		width: 400,
-		height: 200,
-		color: makeColor(0.75, 0.4, 0.15)
-	}
-	var lvl1platform3 = {
-		name: "lvl1platform3",
-		xPosition: world.xPosition + 1560,
-		yPosition: world.yPosition + 700,
-		width: 200,
-		height: 100,
-		color: makeColor(1, 1, 0)
-	}
-	var lvl1platform4 = {
-		name: "lvl1platform4",
-		xPosition: world.xPosition - 200,
-		yPosition: world.yPosition + 600,
-		width: 200,
-		height: 100,
-		color: makeColor(1, 1, 0)
-	}
-	var lvl1platform5 = {
-		name: "lvl1platform5",
-		xPosition: world.xPosition - 500,
-		yPosition: world.yPosition + 400,
-		width: 200,
-		height: 100,
-		color: makeColor(1, 1, 0)
-	}
-	var lvl1platform6 = {
-		name: "lvl1platform6",
-		xPosition: world.xPosition - 1500,
-		yPosition: world.yPosition + 200,
 		width: 600,
-		height: 100,
+		height: 600,
 		color: makeColor(1, 1, 0)
 	}
-	var lvl1platform7 = {
-		name: "lvl1platform7",
-		xPosition: world.xPosition + 2300,
-		yPosition: world.yPosition + 500,
-		width: 400,
-		height: 100,
-		color: makeColor(1, 1, 0)
-	}
-	var lvl1platform8 = {
-		name: "lvl1platform8",
-		xPosition: world.xPosition + 2500,
-		yPosition: world.yPosition + 100,
-		width: 200,
-		height: 500,
-		color: makeColor(1, 1, 0)
-	}
-	var lvl1platform9 = {
-		name: "lvl1platform9",
-		xPosition: world.xPosition + 2700,
-		yPosition: world.yPosition + 300,
-		width: 200,
-		height: 100,
-		color: makeColor(1, 1, 0)
-	}
-	var lvl1platform10 = {
-		name: "lvl1platform10",
-		xPosition: world.xPosition + 3100,
-		yPosition: world.yPosition + 600,
-		width: 400,
-		height: 100,
-		color: makeColor(1, 1, 0)
-	}
-	var lvl1platform11 = {
-		name: "lvl1platform11",
-		xPosition: world.xPosition + 3300,
-		yPosition: world.yPosition + 200,
-		width: 200,
-		height: 400,
-		color: makeColor(1, 1, 0)
-	}
-	var lvl1platform12 = {
-		name: "lvl1platform12",
-		xPosition: world.xPosition + 4000,
-		yPosition: world.yPosition + 500,
-		width: 1000,
-		height: 100,
-		color: makeColor(1, 1, 0)
-	}
-	var lvl1platform13 = {
-		name: "lvl1platform13",
-		xPosition: world.xPosition + 4300,
-		yPosition: world.yPosition + 200,
-		width: 600,
-		height: 100,
-		color: makeColor(1, 1, 0)
-	}
-	var lvl1platform14 = {
-		name: "lvl1platform14",
-		xPosition: world.xPosition + 4200,
-		yPosition: world.yPosition + 200,
-		width: 200,
-		height: 100,
-		color: makeColor(1, 1, 0)
-	}
-	var finish = {
-			name: "finish",
-			xPosition: world.xPosition + 5500,
-			yPosition: world.yPosition + 400,
-			width: 600,
-			height: 600,
-			color: makeColor(1, 1, 0)
-		}
-		// An array that holds all of the platforms of the first level
-	var platformArrayLevel1 = [
+	// An array that holds all of the platforms of the first level
+var platformArrayLevel1 = [
 		ground,
 		lvl1platform1,
 		lvl1platform2,
@@ -501,216 +537,216 @@ var gravity = 6000;
 ///////////    LEVEL TWO PLATFORM STUFF    /////////////
 ////////////////////////////////////////////////////////
 //All of the platforms that appear in the second level
-	var ground = {
-		name: "ground1",
-		xPosition: world.xPosition - 2000,
-		yPosition: world.yPosition + 1200,
-		width: 10000,
-		height: 500,
-		color: makeColor(0, 1, 0)
-	}
-	var lvl2platform1 = {
-		name: "lvl2platform1",
-		xPosition: world.xPosition + 250,
-		yPosition: world.yPosition + 800,
-		width: 300,
-		height: 100,
-		color: makeColor(0.75, 0.4, 0.15)
-	}
-	var lvl2platform2 = {
-		name: "lvl2platform2",
-		xPosition: world.xPosition + 750,
-		yPosition: world.yPosition + 800,
-		width: 200,
-		height: 100,
-		color: makeColor(0.75, 0.4, 0.15)
-	}
-	var lvl2platform3 = {
-		name: "lvl2platform3",
-		xPosition: world.xPosition + 350,
-		yPosition: world.yPosition + 350,
-		width: 200,
-		height: 100,
-		color: makeColor(0.75, 0.4, 0.15)
-	}
-	var lvl2platform4 = {
-		name: "lvl2platform4",
-		xPosition: world.xPosition + 1250,
-		yPosition: world.yPosition + 550,
-		width: 300,
-		height: 100,
-		color: makeColor(0.75, 0.4, 0.15)
-	}
-	var lvl2platform5 = {
-		name: "lvl2platform5",
-		xPosition: world.xPosition + 1450,
-		yPosition: world.yPosition + 250,
-		width: 200,
-		height: 350,
-		color: makeColor(0.75, 0.4, 0.15)
-	}
-	var lvl2platform6 = {
-		name: "lvl2platform6",
-		xPosition: world.xPosition + 1450,
-		yPosition: world.yPosition + 150,
-		width: 300,
-		height: 100,
-		color: makeColor(0.75, 0.4, 0.15)
-	}
-	var lvl2platform7 = {
-		name: "lvl2platform7",
-		xPosition: world.xPosition + 2150,
-		yPosition: world.yPosition + 50,
-		width: 300,
-		height: 100,
-		color: makeColor(0.75, 0.4, 0.15)
-	}
-	var secretlvl2platform = {
-		name: "lvl2platform8",
-		xPosition: world.xPosition + 3550,
-		yPosition: world.yPosition - 150,
-		width: 4000,
-		height: 100,
-		color: makeColor(0.75, 0.4, 0.15)
-	}
-	var lvl2platform9 = {
-		name: "lvl2platform9",
-		xPosition: world.xPosition + 1700,
-		yPosition: world.yPosition + 800,
-		width: 300,
-		height: 100,
-		color: makeColor(0.75, 0.4, 0.15)
-	}
-	var lvl2platform10 = {
-		name: "lvl2platform10",
-		xPosition: world.xPosition + 2000,
-		yPosition: world.yPosition + 500,
-		width: 200,
-		height: 400,
-		color: makeColor(0.75, 0.4, 0.15)
-	}
-	var lvl2platform11 = {
-		name: "lvl2platform11",
-		xPosition: world.xPosition + 2850,
-		yPosition: world.yPosition + 200,
-		width: 200,
-		height: 100,
-		color: makeColor(0.75, 0.4, 0.15)
-	}
-	var lvl2platform12 = {
-		name: "lvl2platform12",
-		xPosition: world.xPosition + 2850,
-		yPosition: world.yPosition + 300,
-		width: 200,
-		height: 300,
-		color: makeColor(0.75, 0.4, 0.15)
-	}
-	var lvl2platform13 = {
-		name: "lvl2platform13",
-		xPosition: world.xPosition + 2850,
-		yPosition: world.yPosition + 500,
-		width: 500,
-		height: 100,
-		color: makeColor(0.75, 0.4, 0.15)
-	}
-	var lvl2platform14 = {
-		name: "lvl2platform14",
-		xPosition: world.xPosition + 3350,
-		yPosition: world.yPosition + 300,
-		width: 200,
-		height: 300,
-		color: makeColor(0.75, 0.4, 0.15)
-	}
-	var lvl2platform15 = {
-		name: "lvl2platform15",
-		xPosition: world.xPosition + 3350,
-		yPosition: world.yPosition + 200,
-		width: 200,
-		height: 100,
-		color: makeColor(0.75, 0.4, 0.15)
-	}
-	var lvl2platform16 = {
-		name: "lvl2platform16",
-		xPosition: world.xPosition + 3450,
-		yPosition: world.yPosition + 900,
-		width: 500,
-		height: 100,
-		color: makeColor(0.75, 0.4, 0.15)
-	}
-	var lvl2platform17 = {
-		name: "lvl2platform17",
-		xPosition: world.xPosition + 3750,
-		yPosition: world.yPosition + 600,
-		width: 500,
-		height: 100,
-		color: makeColor(0.75, 0.4, 0.15)
-	}
-	var lvl2platform18 = {
-		name: "lvl2platform18",
-		xPosition: world.xPosition + 4350,
-		yPosition: world.yPosition + 300,
-		width: 500,
-		height: 300,
-		color: makeColor(0.75, 0.4, 0.15)
-	}
-	var lvl2platform19 = {
-		name: "lvl2platform19",
-		xPosition: world.xPosition + 5050,
-		yPosition: world.yPosition + 700,
-		width: 200,
-		height: 200,
-		color: makeColor(0.75, 0.4, 0.15)
-	}
-	var lvl2platform20 = {
-		name: "lvl2platform20",
-		xPosition: world.xPosition + 5050,
-		yPosition: world.yPosition + 900,
-		width: 300,
-		height: 100,
-		color: makeColor(0.75, 0.4, 0.15)
-	}
-	var lvl2platform21 = {
-		name: "lvl2platform21",
-		xPosition: world.xPosition + 5650,
-		yPosition: world.yPosition + 500,
-		width: 800,
-		height: 100,
-		color: makeColor(0.75, 0.4, 0.15)
-	}
-	var lvl2platform22 = {
-		name: "lvl2platform22",
-		xPosition: world.xPosition + 5950,
-		yPosition: world.yPosition + 200,
-		width: 200,
-		height: 400,
-		color: makeColor(0.75, 0.4, 0.15)
-	}
-	var lvl2platform23 = {
-		name: "lvl2platform23",
-		xPosition: world.xPosition + 6250,
-		yPosition: world.yPosition + 1100,
-		width: 700,
-		height: 100,
-		color: makeColor(0.75, 0.4, 0.15)
-	}
-	var lvl2platform24 = {
-		name: "lvl2platform24",
-		xPosition: world.xPosition + 6350,
-		yPosition: world.yPosition + 1000,
-		width: 500,
-		height: 100,
-		color: makeColor(0.75, 0.4, 0.15)
-	}
-	var lvl2platform25 = {
-		name: "lvl2platform25",
-		xPosition: world.xPosition + 6450,
-		yPosition: world.yPosition + 900,
-		width: 300,
-		height: 100,
-		color: makeColor(0.75, 0.4, 0.15)
-	}
+var ground = {
+	name: "ground1",
+	xPosition: world.xPosition - 2000,
+	yPosition: world.yPosition + 1200,
+	width: 10000,
+	height: 500,
+	color: makeColor(0, 1, 0)
+}
+var lvl2platform1 = {
+	name: "lvl2platform1",
+	xPosition: world.xPosition + 250,
+	yPosition: world.yPosition + 800,
+	width: 300,
+	height: 100,
+	color: makeColor(0.75, 0.4, 0.15)
+}
+var lvl2platform2 = {
+	name: "lvl2platform2",
+	xPosition: world.xPosition + 750,
+	yPosition: world.yPosition + 800,
+	width: 200,
+	height: 100,
+	color: makeColor(0.75, 0.4, 0.15)
+}
+var lvl2platform3 = {
+	name: "lvl2platform3",
+	xPosition: world.xPosition + 350,
+	yPosition: world.yPosition + 350,
+	width: 200,
+	height: 100,
+	color: makeColor(0.75, 0.4, 0.15)
+}
+var lvl2platform4 = {
+	name: "lvl2platform4",
+	xPosition: world.xPosition + 1250,
+	yPosition: world.yPosition + 550,
+	width: 300,
+	height: 100,
+	color: makeColor(0.75, 0.4, 0.15)
+}
+var lvl2platform5 = {
+	name: "lvl2platform5",
+	xPosition: world.xPosition + 1450,
+	yPosition: world.yPosition + 250,
+	width: 200,
+	height: 350,
+	color: makeColor(0.75, 0.4, 0.15)
+}
+var lvl2platform6 = {
+	name: "lvl2platform6",
+	xPosition: world.xPosition + 1450,
+	yPosition: world.yPosition + 150,
+	width: 300,
+	height: 100,
+	color: makeColor(0.75, 0.4, 0.15)
+}
+var lvl2platform7 = {
+	name: "lvl2platform7",
+	xPosition: world.xPosition + 2150,
+	yPosition: world.yPosition + 50,
+	width: 300,
+	height: 100,
+	color: makeColor(0.75, 0.4, 0.15)
+}
+var secretlvl2platform = {
+	name: "lvl2platform8",
+	xPosition: world.xPosition + 3550,
+	yPosition: world.yPosition - 150,
+	width: 4000,
+	height: 100,
+	color: makeColor(0.75, 0.4, 0.15)
+}
+var lvl2platform9 = {
+	name: "lvl2platform9",
+	xPosition: world.xPosition + 1700,
+	yPosition: world.yPosition + 800,
+	width: 300,
+	height: 100,
+	color: makeColor(0.75, 0.4, 0.15)
+}
+var lvl2platform10 = {
+	name: "lvl2platform10",
+	xPosition: world.xPosition + 2000,
+	yPosition: world.yPosition + 500,
+	width: 200,
+	height: 400,
+	color: makeColor(0.75, 0.4, 0.15)
+}
+var lvl2platform11 = {
+	name: "lvl2platform11",
+	xPosition: world.xPosition + 2850,
+	yPosition: world.yPosition + 200,
+	width: 200,
+	height: 100,
+	color: makeColor(0.75, 0.4, 0.15)
+}
+var lvl2platform12 = {
+	name: "lvl2platform12",
+	xPosition: world.xPosition + 2850,
+	yPosition: world.yPosition + 300,
+	width: 200,
+	height: 300,
+	color: makeColor(0.75, 0.4, 0.15)
+}
+var lvl2platform13 = {
+	name: "lvl2platform13",
+	xPosition: world.xPosition + 2850,
+	yPosition: world.yPosition + 500,
+	width: 500,
+	height: 100,
+	color: makeColor(0.75, 0.4, 0.15)
+}
+var lvl2platform14 = {
+	name: "lvl2platform14",
+	xPosition: world.xPosition + 3350,
+	yPosition: world.yPosition + 300,
+	width: 200,
+	height: 300,
+	color: makeColor(0.75, 0.4, 0.15)
+}
+var lvl2platform15 = {
+	name: "lvl2platform15",
+	xPosition: world.xPosition + 3350,
+	yPosition: world.yPosition + 200,
+	width: 200,
+	height: 100,
+	color: makeColor(0.75, 0.4, 0.15)
+}
+var lvl2platform16 = {
+	name: "lvl2platform16",
+	xPosition: world.xPosition + 3450,
+	yPosition: world.yPosition + 900,
+	width: 500,
+	height: 100,
+	color: makeColor(0.75, 0.4, 0.15)
+}
+var lvl2platform17 = {
+	name: "lvl2platform17",
+	xPosition: world.xPosition + 3750,
+	yPosition: world.yPosition + 600,
+	width: 500,
+	height: 100,
+	color: makeColor(0.75, 0.4, 0.15)
+}
+var lvl2platform18 = {
+	name: "lvl2platform18",
+	xPosition: world.xPosition + 4350,
+	yPosition: world.yPosition + 300,
+	width: 500,
+	height: 300,
+	color: makeColor(0.75, 0.4, 0.15)
+}
+var lvl2platform19 = {
+	name: "lvl2platform19",
+	xPosition: world.xPosition + 5050,
+	yPosition: world.yPosition + 700,
+	width: 200,
+	height: 200,
+	color: makeColor(0.75, 0.4, 0.15)
+}
+var lvl2platform20 = {
+	name: "lvl2platform20",
+	xPosition: world.xPosition + 5050,
+	yPosition: world.yPosition + 900,
+	width: 300,
+	height: 100,
+	color: makeColor(0.75, 0.4, 0.15)
+}
+var lvl2platform21 = {
+	name: "lvl2platform21",
+	xPosition: world.xPosition + 5650,
+	yPosition: world.yPosition + 500,
+	width: 800,
+	height: 100,
+	color: makeColor(0.75, 0.4, 0.15)
+}
+var lvl2platform22 = {
+	name: "lvl2platform22",
+	xPosition: world.xPosition + 5950,
+	yPosition: world.yPosition + 200,
+	width: 200,
+	height: 400,
+	color: makeColor(0.75, 0.4, 0.15)
+}
+var lvl2platform23 = {
+	name: "lvl2platform23",
+	xPosition: world.xPosition + 6250,
+	yPosition: world.yPosition + 1100,
+	width: 700,
+	height: 100,
+	color: makeColor(0.75, 0.4, 0.15)
+}
+var lvl2platform24 = {
+	name: "lvl2platform24",
+	xPosition: world.xPosition + 6350,
+	yPosition: world.yPosition + 1000,
+	width: 500,
+	height: 100,
+	color: makeColor(0.75, 0.4, 0.15)
+}
+var lvl2platform25 = {
+	name: "lvl2platform25",
+	xPosition: world.xPosition + 6450,
+	yPosition: world.yPosition + 900,
+	width: 300,
+	height: 100,
+	color: makeColor(0.75, 0.4, 0.15)
+}
 
-	var platformArrayLevel2 = [
+var platformArrayLevel2 = [
 		ground,
 		lvl2platform1,
 		lvl2platform2,
@@ -746,19 +782,19 @@ var gravity = 6000;
 ////////////////////////////////////////////////////////
 ///////////   LEVEL THREE PLATFORM STUFF  //////////////
 ////////////////////////////////////////////////////////
-	var ground = {
-		name: "ground",
-		xPosition: world.xPosition - 2000,
-		yPosition: world.yPosition + 1200,
-		width: 10000,
-		height: 500,
-		color: makeColor(0, 1, 0)
-	}
-	
-	var platformArrayLevel3 = [
-		ground
-	]
-	
+var ground = {
+	name: "ground",
+	xPosition: world.xPosition - 2000,
+	yPosition: world.yPosition + 1200,
+	width: 10000,
+	height: 500,
+	color: makeColor(0, 1, 0)
+}
+
+var platformArrayLevel3 = [
+	ground
+]
+
 ////////////////////////////////////////////////////////
 ///////////  END LEVEL THREE PLATFORM STUFF  ///////////
 ////////////////////////////////////////////////////////
@@ -767,20 +803,20 @@ var gravity = 6000;
 ///////////    LEVEL ONE ENEMY STUFF    ////////////////
 ////////////////////////////////////////////////////////
 
-	var lvl1enemy1 = {
-		xPosition: world.xPosition + 4875,
-		yPosition: world.yPosition + 400,
-		height: 100,
-		width: 73,
-		image: loadImage("images/enemyleft.png"),
-		shootDirection: "left",
-		fireRate: 1.5,
-		fireTimer: 0.0,
-		health: 20
-	}
+var lvl1enemy1 = {
+	xPosition: world.xPosition + 4875,
+	yPosition: world.yPosition + 400,
+	height: 100,
+	width: 73,
+	image: loadImage("images/enemyleft30.png"),
+	shootDirection: "left",
+	fireRate: 1.5,
+	fireTimer: 0.0,
+	health: 20
+}
 
 
-	var enemiesLevel1 = [
+var enemiesLevel1 = [
 		lvl1enemy1
 	]
 ////////////////////////////////////////////////////////
@@ -792,104 +828,104 @@ var gravity = 6000;
 ///////////    LEVEL TWO ENEMY STUFF    ////////////////
 ////////////////////////////////////////////////////////
 var lvl2enemy1 = {
-		xPosition: world.xPosition + 350,
-		yPosition: world.yPosition + 700,
-		height: 100,
-		width: 73,
-		image: loadImage("images/enemyright.png"),
-		shootDirection: "right",
-		fireRate: .5,
-		fireTimer: 0.0,
-		health: 30
-	}
+	xPosition: world.xPosition + 350,
+	yPosition: world.yPosition + 700,
+	height: 100,
+	width: 73,
+	image: loadImage("images/enemyright30.png"),
+	shootDirection: "right",
+	fireRate: .5,
+	fireTimer: 0.0,
+	health: 30
+}
 var lvl2enemy2 = {
-		xPosition: world.xPosition + 250,
-		yPosition: world.yPosition + 700,
-		height: 100,
-		width: 73,
-		image: loadImage("images/enemyleft.png"),
-		shootDirection: "left",
-		fireRate: 1,
-		fireTimer: 0.0,
-		health: 30
-	}
+	xPosition: world.xPosition + 250,
+	yPosition: world.yPosition + 700,
+	height: 100,
+	width: 73,
+	image: loadImage("images/enemyleft30.png"),
+	shootDirection: "left",
+	fireRate: 1,
+	fireTimer: 0.0,
+	health: 30
+}
 var lvl2enemy3 = {
-		xPosition: world.xPosition + 1750,
-		yPosition: world.yPosition + 700,
-		height: 100,
-		width: 73,
-		image: loadImage("images/enemyleft.png"),
-		shootDirection: "left",
-		fireRate: 1,
-		fireTimer: 0.0,
-		health: 30
-	}
+	xPosition: world.xPosition + 1750,
+	yPosition: world.yPosition + 700,
+	height: 100,
+	width: 73,
+	image: loadImage("images/enemyleft30.png"),
+	shootDirection: "left",
+	fireRate: 1,
+	fireTimer: 0.0,
+	health: 30
+}
 var lvl2enemy4 = {
-		xPosition: world.xPosition + 3350,
-		yPosition: world.yPosition + 100,
-		height: 100,
-		width: 73,
-		image: loadImage("images/enemyleft.png"),
-		shootDirection: "left",
-		fireRate: 1,
-		fireTimer: 0.0,
-		health: 30
-	}
+	xPosition: world.xPosition + 3350,
+	yPosition: world.yPosition + 100,
+	height: 100,
+	width: 73,
+	image: loadImage("images/enemyleft30.png"),
+	shootDirection: "left",
+	fireRate: 1,
+	fireTimer: 0.0,
+	health: 30
+}
 var lvl2enemy5 = {
-		xPosition: world.xPosition + 3850,
-		yPosition: world.yPosition + 800,
-		height: 100,
-		width: 73,
-		image: loadImage("images/enemyleft.png"),
-		shootDirection: "left",
-		fireRate: 1,
-		fireTimer: 0.0,
-		health: 30
-	}
+	xPosition: world.xPosition + 3850,
+	yPosition: world.yPosition + 800,
+	height: 100,
+	width: 73,
+	image: loadImage("images/enemyleft30.png"),
+	shootDirection: "left",
+	fireRate: 1,
+	fireTimer: 0.0,
+	health: 30
+}
 var lvl2enemy6 = {
-		xPosition: world.xPosition + 4050,
-		yPosition: world.yPosition + 500,
-		height: 100,
-		width: 73,
-		image: loadImage("images/enemyleft.png"),
-		shootDirection: "left",
-		fireRate: 1,
-		fireTimer: 0.0,
-		health: 30
-	}
+	xPosition: world.xPosition + 4050,
+	yPosition: world.yPosition + 500,
+	height: 100,
+	width: 73,
+	image: loadImage("images/enemyleft30.png"),
+	shootDirection: "left",
+	fireRate: 2,
+	fireTimer: 0.0,
+	health: 30
+}
 var lvl2enemy7 = {
-		xPosition: world.xPosition + 4750,
-		yPosition: world.yPosition + 200,
-		height: 100,
-		width: 73,
-		image: loadImage("images/enemyleft.png"),
-		shootDirection: "left",
-		fireRate: 1,
-		fireTimer: 0.0,
-		health: 30
-	}
+	xPosition: world.xPosition + 4750,
+	yPosition: world.yPosition + 200,
+	height: 100,
+	width: 73,
+	image: loadImage("images/enemyleft30.png"),
+	shootDirection: "left",
+	fireRate: 1,
+	fireTimer: 0.0,
+	health: 30
+}
 var lvl2enemy8 = {
-		xPosition: world.xPosition + 6350,
-		yPosition: world.yPosition + 400,
-		height: 100,
-		width: 73,
-		image: loadImage("images/enemyright.png"),
-		shootDirection: "right",
-		fireRate: 1,
-		fireTimer: 0.0,
-		health: 30
-	}
-	
-	
+	xPosition: world.xPosition + 6350,
+	yPosition: world.yPosition + 400,
+	height: 100,
+	width: 73,
+	image: loadImage("images/enemyright30.png"),
+	shootDirection: "right",
+	fireRate: 1,
+	fireTimer: 0.0,
+	health: 30
+}
+
+
 var enemiesLevel2 = [
-		lvl2enemy1,
-		lvl2enemy2,
-		lvl2enemy3,
-		lvl2enemy4,
-		lvl2enemy5,
-		lvl2enemy6,
-		lvl2enemy7,
-		lvl2enemy8
+	lvl2enemy1,
+	lvl2enemy2,
+	lvl2enemy3,
+	lvl2enemy4,
+	lvl2enemy5,
+	lvl2enemy6,
+	lvl2enemy7,
+	lvl2enemy8
 ]
 
 ////////////////////////////////////////////////////////
@@ -903,7 +939,7 @@ var enemiesLevel2 = [
 
 var enemiesLevel3 = [
 
-]
+	]
 ////////////////////////////////////////////////////////
 ///////////   END LEVEL THREE ENEMY STUFF    ///////////
 ////////////////////////////////////////////////////////
@@ -934,6 +970,8 @@ var previousTime = 0;
 ////////////////////////////////////////////////
 ////////////    Setup and OnTick    ////////////
 ////////////////////////////////////////////////
+defineGame("Space Bear", "Eashwar, Anushka, and Max", "images/TitleScreen.png", "H", true, true, undefined, "drag ignores touch keys");
+
 
 // This function gets ran once at the beginning of the game
 function onSetup()
@@ -947,9 +985,8 @@ function onSetup()
 		setTouchKeyRectangle(up, 10, screenHeight - 310, 600, 300, "");
 		setTouchKeyRectangle(left, screenWidth - 640, screenHeight - 310, 300, 300, "");
 		setTouchKeyRectangle(right, screenWidth - 310, screenHeight - 310, 300, 300, "");
+		setTouchKeyRectangle(shoot, 620, screenHeight - 310, 300, 300, "");
 	}
-
-	playSound(music, true);
 }
 
 // This function gets called every frame, about 30 times a second
@@ -957,6 +994,12 @@ function onTick()
 {
 	doPhysics();
 	doGraphics();
+	
+	
+	if (!playingSound(music))
+	{
+		playSound(music);
+	}
 }
 
 ////////////////////////////////////////////////
@@ -1032,7 +1075,8 @@ function doPhysics()
 			if (enemy.shootDirection == "left")
 			{
 				bullet = new createBullet(enemy.xPosition, enemy.yPosition, enemy.shootDirection, 250, "bad");
-			} else
+			}
+			else
 			{
 				bullet = new createBullet(enemy.xPosition + 100, enemy.yPosition, enemy.shootDirection, 250, "bad");
 			}
@@ -1103,13 +1147,13 @@ function platformCollisionDetection()
 					player.xPosition = world.xPosition + 700;
 					player.yPosition = world.yPosition + 1100;
 					level.level1 = false;
-					level.level2 = true;
-					level.level3 = false;
+					level.prelevel2 = true;
 					player.yVelocity = 0;
 					player.yPosition = world.yPosition + platform.yPosition - player.imageHeight / 2;
 					player.isGrounded = true;
 					hitSomething = true;
-				}else
+				}
+				else
 				{
 					player.yVelocity = 0;
 					player.yPosition = world.yPosition + platform.yPosition - player.imageHeight / 2;
@@ -1120,20 +1164,10 @@ function platformCollisionDetection()
 			// Player's head collided with a platform
 			else if (collision == 2)
 			{
-				if (counter == 3 || counter == 14)
-				{
-					player.yVelocity = 0;
-					player.yPosition = world.yPosition + platform.yPosition + platform.height + player.imageHeight / 2;
-					hitSomething = true;
-					coinBoxHit = true;
-					coinboxcounter = counter;
-				}
-				else
-				{
-					player.yVelocity = 0;
-					player.yPosition = world.yPosition + platform.yPosition + platform.height + player.imageHeight / 2;
-					hitSomething = true;
-				}
+				player.yVelocity = 0;
+				player.yPosition = world.yPosition + platform.yPosition + platform.height + player.imageHeight / 2;
+				hitSomething = true;
+			
 			}
 
 			// Player's right side collided with a platform
@@ -1150,8 +1184,7 @@ function platformCollisionDetection()
 					player.xPosition = world.xPosition + 700;
 					player.yPosition = world.yPosition + 1100;
 					level.level1 = false;
-					level.level2 = true;
-					level.level3 = false;
+					level.prelevel2 = true;
 				}
 				else
 				{
@@ -1264,7 +1297,7 @@ function platformCollisionDetection()
 			}
 		}
 	}
-	
+
 	// If the player didn't hit anything then the they can't be on the ground
 	if (!hitSomething)
 	{
@@ -1373,6 +1406,28 @@ function bulletCollisionDetection()
 				if (bullet.origin == "good")
 				{
 					enemy.health -= 10;
+					if (enemy.shootDirection == "right")
+					{
+						if (enemy.health == 20)
+						{
+							enemy.image = loadImage("images/enemyright20.png");
+						}
+						if (enemy.health == 10)
+						{
+							enemy.image = loadImage("images/enemyright10.png");
+						}
+					}
+					if (enemy.shootDirection == "left")
+					{
+						if (enemy.health == 20)
+						{
+							enemy.image = loadImage("images/enemyleft20.png");
+						}
+						if (enemy.health == 10)
+						{
+							enemy.image = loadImage("images/enemyleft10.png");
+						}
+					}
 					bulletArray.splice(i, 1);
 					break;
 				}
@@ -1388,24 +1443,6 @@ function bulletCollisionDetection()
 // Returns 2 if the first object's top side touched the other object
 // Returns 3 if the first object's right side touched the other object
 // Returns 4 if the first object's left side touched the other object
-function coinbox(i)
-{
-	// coinBoxHit = true;
-	var platform;
-	for (var j = 0; j < platformArray.length; ++j)
-	{
-		if (("platform" + i) == platformArray[j].name)
-		{
-			platform = platformArray[j]
-		}
-	}
-	if (coinBoxHit)
-	{
-		var newCoin = new coin(platform);
-		coins.push(newCoin);
-	}
-	coinBoxHit = false;
-}
 
 function checkCollision(top, bottom, left, right,
 	otherTop, otherBottom, otherLeft, otherRight)
@@ -1452,11 +1489,8 @@ function doGraphics()
 	drawImage(backgroundImage, 0, 0, screenWidth, screenHeight);
 
 
-	if (!level.gameover)
+	if ((level.level1 || level.level2 || level.level3) && !level.gameover)
 	{ //Any level
-
-
-
 		// Draw Platforms
 		checkObjectiveStatus();
 		for (var counter = 0; counter < platformArray.length; ++counter)
@@ -1499,7 +1533,6 @@ function doGraphics()
 			}
 		}
 		//Draw Coins
-		coinbox(coinboxcounter);
 		// Update timer for coin animations
 		coinTemplate.animationTimer += deltaTime;
 
@@ -1545,7 +1578,37 @@ function doGraphics()
 			var enemy = enemies[i]
 			drawImage(enemy.image, world.xPosition + enemy.xPosition, enemy.yPosition, enemy.width, enemy.height);
 		}
-
+		
+		if (player.yPosition > 1250)
+		{
+			if (level.level1){
+				player.yPosition = 935;
+			}
+			if (level.level2){
+				player.yPosition = 1130;
+			}
+			if (level.level3){
+				player.yPosition = 1100;
+			}
+		}
+		
+		if (!lvl1playerset && level.level1)
+		{
+			player.yVelocity = 0;
+			lvl1playerset = true;
+		}
+		if (!lvl2playerset && level.level2)
+		{
+			player.yVelocity = 0;
+			lvl2playerset = true;
+		}		
+		if (!lvl3playerset && level.level3)
+		{
+			player.yVelocity = 0;
+			lvl3playerset = true;
+		}
+		
+		
 		// Draw Player
 		// Update the animation timers
 		player.animationTimer += deltaTime;
@@ -1604,34 +1667,35 @@ function doGraphics()
 		// Display amount of coins
 		if (level.level1)
 		{
-			if(player.coinCounter < 20)
+			if (player.coinCounter < 25)
 			{
-				fillText("Coins Left: " + (20 - player.coinCounter), 300, 50, makeColor(1, 1, 1), "bold 75px sans-serif", left, top);
-			}else
+				fillText("Coins Left: " + (25 - player.coinCounter), 300, 50, makeColor(1, 1, 1), "bold 60px sans-serif", left, top);
+			}
+			else
 			{
-				fillText("Coins: " + player.coinCounter, 200, 50, makeColor(1, 1, 1), "bold 75px sans-serif", left, top);
+				fillText("Head for the finish all the way at the right!", 300, 50, makeColor(1, 1, 1), "bold 30px sans-serif", left, top);
 			}
 		}
 		if (level.level2)
 		{
-			fillText("Coins: " + player.coinCounter, 200, 50, makeColor(1, 1, 1), "bold 75px sans-serif", left, top);
+			fillText("Coins: " + player.coinCounter, 200, 50, makeColor(1, 1, 1), "bold 60px sans-serif", left, top);
 		}
-		
+
 		// Display amount of enemies
 		if (level.level1)
 		{
-			fillText("Enemies Killed: " + player.killCounter, 900, 50, makeColor(1, 1, 1), "bold 75px sans-serif", left, top);
+			fillText("Enemies Killed: " + player.killCounter, 900, 50, makeColor(1, 1, 1), "bold 60px sans-serif", left, top);
 		}
 		if (level.level2)
 		{
-			fillText("Enemies Left: " + (9 - player.killCounter), 700, 50, makeColor(1, 1, 1), "bold 75px sans-serif", left, top);
+			fillText("Enemies Left: " + (9 - player.killCounter), 700, 50, makeColor(1, 1, 1), "bold 60px sans-serif", left, top);
 		}
-		
+
 		// Display amount of health
-		fillText("Health: " + player.health, screenWidth - 200, 50, makeColor(1, 1, 1), "bold 75px sans-serif", left, top);
+		fillText("Health: " + player.health, screenWidth - 200, 50, makeColor(1, 1, 1), "bold 60px sans-serif", left, top);
 
 		// Display lives left
-		fillText("Lives: " + player.lives, screenWidth - 550, 50, makeColor(1, 1, 1), "bold 75px sans-serif", left, top);
+		fillText("Lives: " + player.lives, screenWidth - 550, 50, makeColor(1, 1, 1), "bold 60px sans-serif", left, top);
 
 
 		// Draw touch buttons if on mobile
@@ -1640,6 +1704,7 @@ function doGraphics()
 			drawTouchKeys();
 		}
 	}
+	
 }
 
 ////////////////////////////////////////////////
@@ -1765,7 +1830,7 @@ function checkObjectiveStatus()
 {
 	if (level.level1)
 	{
-		if (!finishaddlevel1 && player.coinCounter >= 20)
+		if (!finishaddlevel1 && player.coinCounter >= 25)
 		{
 			platformArray.push(finish);
 			finishaddlevel1 = true;
@@ -1775,9 +1840,8 @@ function checkObjectiveStatus()
 	{
 		if (!enemieskilledlevel2 && player.killCounter > 8)
 		{
-			level.level1 = false;
 			level.level2 = false;
-			level.level3 = true;
+			level.prelevel3 = true;
 		}
 	}
 
@@ -1787,6 +1851,7 @@ function checkPlayerHealth()
 {
 	if (player.health <= 0)
 	{
+		alert("You died!");
 		if (level.level1)
 		{
 			world.xPosition = 0;
@@ -1841,6 +1906,30 @@ function checkEnemyHealth()
 
 function graphicLoader()
 {
+	if (level.prelevel1 && !prelevel1loaded)
+	{
+		prelevel1timer += deltaTime;
+		
+		
+		backgroundImage = loadImage("images/level1intro.png");
+		
+		
+		platformArray.length = 0;
+		coins.length = 0;
+		enemies.length = 0;
+		platformArray = platformArray.concat(prelevelplatformArray);
+		
+		player.xPosition = 0;
+		player.yPosition = world.yPosition - 200;		
+		
+		if (prelevel1timer >= 5)
+		{
+			backgroundImage = loadImage("images/sky.png");
+			level.prelevel1 = false;
+			level.level1 = true;
+			prelevel1loaded = true;
+		}
+	}
 	if (level.level1 && !level1loaded)
 	{
 		platformArray.length = 0;
@@ -1849,7 +1938,31 @@ function graphicLoader()
 		platformArray = platformArray.concat(platformArrayLevel1);
 		coins = coins.concat(coinsLevel1);
 		enemies = enemies.concat(enemiesLevel1);
+		player.xPosition = 700;
+		player.yPosition = 800;
 		level1loaded = true;
+	}
+	if (level.prelevel2 && !prelevel2loaded)
+	{
+		prelevel2timer += deltaTime;
+		
+		backgroundImage = loadImage("images/level2intro.png");
+		
+		platformArray.length = 0;
+		coins.length = 0;
+		enemies.length = 0;
+		platformArray = platformArray.concat(prelevelplatformArray);
+		
+		player.xPosition = 0;
+		player.yPosition = world.yPosition - 200;
+		
+		if (prelevel2timer >= 5)
+		{
+			backgroundImage = loadImage("images/sky.png");
+			level.prelevel2 = false;
+			level.level2 = true;
+			prelevel2loaded = true;
+		}
 	}
 	if (level.level2 && !level2loaded)
 	{
@@ -1859,7 +1972,31 @@ function graphicLoader()
 		platformArray = platformArray.concat(platformArrayLevel2);
 		coins = coins.concat(coinsLevel2);
 		enemies = enemies.concat(enemiesLevel2);
+		player.xPosition = 700;
+		player.yPosition = 1100;
 		level2loaded = true;
+	}
+	if (level.prelevel3 && !prelevel3loaded)
+	{
+		prelevel3timer += deltaTime;
+		
+		backgroundImage = loadImage("images/level3intro.png");
+
+		platformArray.length = 0;
+		coins.length = 0;
+		enemies.length = 0;
+		platformArray = platformArray.concat(prelevelplatformArray);
+		
+		player.xPosition = 0;
+		player.yPosition = world.yPosition - 200;
+		
+		if (prelevel3timer >= 5)
+		{
+			backgroundImage = loadImage("images/sky.png");
+			level.prelevel3 = false;
+			level.level3 = true;
+			prelevel3loaded = true;		
+		}
 	}
 	if (level.level3 && !level3loaded)
 	{
@@ -1869,7 +2006,9 @@ function graphicLoader()
 		platformArray = platformArray.concat(platformArrayLevel3);
 		coins = coins.concat(coinsLevel3);
 		enemies = enemies.concat(enemiesLevel3);
-		level2loaded = true;
+		player.xPosition = 700;
+		player.yPosition = 1135;
+		level3loaded = true;
 	}
 }
 ////////////////////////////////////////////////
