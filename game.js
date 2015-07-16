@@ -32,12 +32,12 @@ var world = {
 }
 
 var level = {
-	prelevel1: true,
+	prelevel1: false,
 	level1: false,
 	prelevel2: false,
 	level2: false,
 	prelevel3: false,
-	level3: false,
+	level3: true,
 	gameover: false
 }
 
@@ -790,9 +790,188 @@ var ground = {
 	height: 500,
 	color: makeColor(0, 1, 0)
 }
-
+var lvl3platform1 = {
+	name: "lvl3platform1",
+	xPosition: world.xPosition - 500,
+	yPosition: world.yPosition + 1100,
+	width: 1100,
+	height: 100,
+	color: makeColor(0, 1, 0)
+}
+var lvl3platform2 = {
+	name: "lvl3platform2",
+	xPosition: world.xPosition - 500,
+	yPosition: world.yPosition + 1000,
+	width: 1000,
+	height: 100,
+	color: makeColor(0, 1, 0)
+}
+var lvl3platform3 = {
+	name: "lvl3platform3",
+	xPosition: world.xPosition - 500,
+	yPosition: world.yPosition + 1000,
+	width: 1000,
+	height: 100,
+	color: makeColor(0, 1, 0)
+}
+var lvl3platform4 = {
+	name: "lvl3platform4",
+	xPosition: world.xPosition - 500,
+	yPosition: world.yPosition + 900,
+	width: 900,
+	height: 100,
+	color: makeColor(0, 1, 0)
+}
+var lvl3platform5 = {
+	name: "lvl3platform5",
+	xPosition: world.xPosition - 500,
+	yPosition: world.yPosition + 800,
+	width: 800,
+	height: 100,
+	color: makeColor(0, 1, 0)
+}
+var lvl3platform6 = {
+	name: "lvl3platform6",
+	xPosition: world.xPosition - 500,
+	yPosition: world.yPosition + 700,
+	width: 700,
+	height: 100,
+	color: makeColor(0, 1, 0)
+}
+var lvl3platform7 = {
+	name: "lvl3platform7",
+	xPosition: world.xPosition - 500,
+	yPosition: world.yPosition + 600,
+	width: 600,
+	height: 100,
+	color: makeColor(0, 1, 0)
+}
+var lvl3platform8 = {
+	name: "lvl3platform8",
+	xPosition: world.xPosition - 500,
+	yPosition: world.yPosition + 500,
+	width: 500,
+	height: 100,
+	color: makeColor(0, 1, 0)
+}
+var lvl3platform9 = {
+	name: "lvl3platform9",
+	xPosition: world.xPosition + 700,
+	yPosition: world.yPosition + 700,
+	width: 400,
+	height: 100,
+	color: makeColor(0, 1, 0)
+}
+var lvl3platform10 = {
+	name: "lvl3platform10",
+	xPosition: world.xPosition + 1200,
+	yPosition: world.yPosition + 500,
+	width: 400,
+	height: 100,
+	color: makeColor(0, 1, 0)
+}
+var lvl3platform11 = {
+	name: "lvl3platform11",
+	xPosition: world.xPosition + 3600,
+	yPosition: world.yPosition + 1100,
+	width: 1100,
+	height: 100,
+	color: makeColor(0, 1, 0)
+}
+var lvl3platform12 = {
+	name: "lvl3platform12",
+	xPosition: world.xPosition + 3700,
+	yPosition: world.yPosition + 1000,
+	width: 1000,
+	height: 100,
+	color: makeColor(0, 1, 0)
+}
+var lvl3platform13 = {
+	name: "lvl3platform13",
+	xPosition: world.xPosition + 3700,
+	yPosition: world.yPosition + 1000,
+	width: 1000,
+	height: 100,
+	color: makeColor(0, 1, 0)
+}
+var lvl3platform14 = {
+	name: "lvl3platform14",
+	xPosition: world.xPosition + 3800,
+	yPosition: world.yPosition + 900,
+	width: 900,
+	height: 100,
+	color: makeColor(0, 1, 0)
+}
+var lvl3platform15 = {
+	name: "lvl3platform15",
+	xPosition: world.xPosition + 3900,
+	yPosition: world.yPosition + 800,
+	width: 800,
+	height: 100,
+	color: makeColor(0, 1, 0)
+}
+var lvl3platform16 = {
+	name: "lvl3platform16",
+	xPosition: world.xPosition + 4000,
+	yPosition: world.yPosition + 700,
+	width: 700,
+	height: 100,
+	color: makeColor(0, 1, 0)
+}
+var lvl3platform17 = {
+	name: "lvl3platform17",
+	xPosition: world.xPosition + 4100,
+	yPosition: world.yPosition + 600,
+	width: 600,
+	height: 100,
+	color: makeColor(0, 1, 0)
+}
+var lvl3platform18 = {
+	name: "lvl3platform18",
+	xPosition: world.xPosition + 4200,
+	yPosition: world.yPosition + 500,
+	width: 500,
+	height: 100,
+	color: makeColor(0, 1, 0)
+}
+var lvl3platform19 = {
+	name: "lvl3platform19",
+	xPosition: world.xPosition + 3100,
+	yPosition: world.yPosition + 700,
+	width: 400,
+	height: 100,
+	color: makeColor(0, 1, 0)
+}
+var lvl3platform20 = {
+	name: "lvl3platform20",
+	xPosition: world.xPosition + 2600,
+	yPosition: world.yPosition + 500,
+	width: 400,
+	height: 100,
+	color: makeColor(0, 1, 0)
+}
 var platformArrayLevel3 = [
-	ground
+	ground,
+	lvl3platform1,
+	lvl3platform2,
+	lvl3platform3,
+	lvl3platform4,
+	lvl3platform5,
+	lvl3platform6,
+	lvl3platform7,
+	lvl3platform8,
+	lvl3platform9,
+	lvl3platform10,
+	lvl3platform11,
+	lvl3platform12,
+	lvl3platform13,
+	lvl3platform14,
+	lvl3platform15,
+	lvl3platform16,
+	lvl3platform17,
+	lvl3platform18,
+	lvl3platform19,
+	lvl3platform20
 ]
 
 ////////////////////////////////////////////////////////
