@@ -7,6 +7,11 @@ var backgroundImage = loadImage("images/sky.png");
 var jumpsound = loadSound("sounds/jump.mp3");
 // The background music
 var music = loadSound("sounds/bgm.mp3");
+
+var fanfare = loadSound("sounds/fanfare.mp3");
+var fanfareplay = false;
+
+
 // The image for the blocks
 var platformImage = loadImage("images/platformImage.png");
 
@@ -1335,9 +1340,13 @@ function onTick()
 	doGraphics();
 
 
-	if (!playingSound(music))
+	if (!playingSound(music) && !fanfareplay)
 	{
 		playSound(music);
+	}
+	if (fanfareplay)
+	{
+		stopSound(music);
 	}
 }
 
@@ -1931,7 +1940,11 @@ function doGraphics()
 			{
 				endExplosion(boss);
 				coins.push(spacehoney);
+				enemies.length = 0;
+				bullets.length = 0;
 				explosiondone = false;
+				fanfareplay = true;
+				playSound(fanfare);
 			}
 		}
 
