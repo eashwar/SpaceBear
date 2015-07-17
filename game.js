@@ -2438,7 +2438,7 @@ function graphicLoader()
 		player.xPosition = 0;
 		player.yPosition = world.yPosition - 200;
 
-		if (prelevel1timer >= 5)
+		if (prelevel1timer >= 10)
 		{
 			backgroundImage = loadImage("images/sky.png");
 			level.prelevel1 = false;
