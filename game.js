@@ -12,6 +12,7 @@ var platformImage = loadImage("images/platformImage.png");
 
 var lvl1finishimage = loadImage("images/Level1Finish.png");
 
+
 var jumppic = loadImage("images/jump.png");
 var leftpic = loadImage("images/left.png");
 var rightpic = loadImage("images/right.png");
@@ -41,13 +42,14 @@ var world = {
 }
 
 var level = {
-	storylevel:true,
+	storylevel: true,
 	prelevel1: false,
 	level1: false,
 	prelevel2: false,
 	level2: false,
 	prelevel3: false,
 	level3: false,
+	credits: false,
 	gameover: false
 }
 
@@ -58,6 +60,11 @@ var enemies = [];
 
 // For loading the assets of each level
 var storylevelloaded = false;
+
+
+var creditstimer = 0;
+var creditsloaded = false;
+
 
 var level1loaded = false;
 var level2loaded = false;
@@ -353,11 +360,12 @@ var coinsLevel2 = [
 ////////////////////////////////////////////////////
 ///////////   LEVEL THREE COIN STUFF   /////////////
 ////////////////////////////////////////////////////
+var spacehoney = {
+	xPosition: world.xPosition + 2050,
+	yPosition: world.yPosition + 800
+}
 
-
-var coinsLevel3 = [
-
-]
+var coinsLevel3 = []
 
 ////////////////////////////////////////////////////
 /////////// END LEVEL THREE COIN STUFF /////////////
@@ -371,7 +379,7 @@ var coinSound = loadSound("sounds/coin.mp3");
 ////////////////////////////////////////////////////////
 ///////////    PRELEVEL PLATFORM/ENEMY STUFF    ////////
 ////////////////////////////////////////////////////////
-	var ground = {
+var ground = {
 	name: "ground",
 	xPosition: world.xPosition - 1000,
 	yPosition: world.yPosition - 100,
@@ -379,7 +387,7 @@ var coinSound = loadSound("sounds/coin.mp3");
 	height: 100,
 	color: makeColor(0, 1, 0)
 }
-	var platform1 = {
+var platform1 = {
 	name: "ground",
 	xPosition: world.xPosition - 1000,
 	yPosition: world.yPosition - 300,
@@ -414,10 +422,10 @@ var storylevelenemy2 = {
 	fireTimer: 0.0,
 	health: 10
 }
-	
+
 var storylevelenemies = [
-		storylevelenemy1,
-		storylevelenemy2
+	storylevelenemy1,
+	storylevelenemy2
 ]
 
 ////////////////////////////////////////////////////////
@@ -594,9 +602,9 @@ var platformArrayLevel1 = [
 		lvl1barrier1,
 		lvl1barrier2
 	]
-////////////////////////////////////////////////////////
-///////////  END LEVEL ONE PLATFORM STUFF  /////////////
-////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////
+	///////////  END LEVEL ONE PLATFORM STUFF  /////////////
+	////////////////////////////////////////////////////////
 
 
 ////////////////////////////////////////////////////////
@@ -858,9 +866,9 @@ var platformArrayLevel2 = [
 		lvl2barrier1,
 		lvl2barrier2
 	]
-////////////////////////////////////////////////////////
-///////////  END LEVEL TWO PLATFORM STUFF  /////////////
-////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////
+	///////////  END LEVEL TWO PLATFORM STUFF  /////////////
+	////////////////////////////////////////////////////////
 
 
 ////////////////////////////////////////////////////////
@@ -1082,9 +1090,9 @@ var lvl1enemy1 = {
 var enemiesLevel1 = [
 		lvl1enemy1
 	]
-////////////////////////////////////////////////////////
-///////////   END LEVEL ONE ENEMY STUFF    /////////////
-////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////
+	///////////   END LEVEL ONE ENEMY STUFF    /////////////
+	////////////////////////////////////////////////////////
 
 
 ////////////////////////////////////////////////////////
@@ -1200,24 +1208,78 @@ var enemiesLevel2 = [
 ///////////    LEVEL THREE ENEMY STUFF    //////////////
 ////////////////////////////////////////////////////////
 var boss = {
+	name: "boss",
 	xPosition: world.xPosition + 1700,
-	yPosition: world.yPosition + 600,
+	yPosition: world.yPosition + 700,
 	height: 356,
 	width: 800,
 	image: loadImage("images/boss.png"),
 	shootDirection: "left",
 	fireRate: 1.25,
 	fireTimer: 0.0,
-	health: 400
+	health: 210
+}
+var lvl3enemy1 = {
+	name: "enemy1",
+	xPosition: world.xPosition + 700,
+	yPosition: world.yPosition + 1100,
+	height: 100,
+	width: 73,
+	image: loadImage("images/enemyright30.png"),
+	shootDirection: "right",
+	fireRate: 1.25,
+	fireTimer: 0.0,
+	health: 30
+}
+var lvl3enemy2 = {
+	name: "enemy2",
+	xPosition: world.xPosition + 3500,
+	yPosition: world.yPosition + 1100,
+	height: 100,
+	width: 73,
+	image: loadImage("images/enemyleft30.png"),
+	shootDirection: "left",
+	fireRate: 1.25,
+	fireTimer: 0.0,
+	health: 30
+}
+var lvl3enemy3 = {
+	name: "enemy1",
+	xPosition: world.xPosition + 800,
+	yPosition: world.yPosition + 800,
+	height: 100,
+	width: 73,
+	image: loadImage("images/enemyright30.png"),
+	shootDirection: "right",
+	fireRate: 1.25,
+	fireTimer: 0.0,
+	health: 30
+}
+var lvl3enemy4 = {
+	name: "enemy1",
+	xPosition: world.xPosition + 3400,
+	yPosition: world.yPosition + 800,
+	height: 100,
+	width: 73,
+	image: loadImage("images/enemyleft30.png"),
+	shootDirection: "left",
+	fireRate: 1.25,
+	fireTimer: 0.0,
+	health: 30
 }
 
 
+var bossTimer = 0;
+
+var explosiondone = false;
+var explosionTimer = 0;
+
 var enemiesLevel3 = [
-	boss
+		boss,
 	]
-////////////////////////////////////////////////////////
-///////////   END LEVEL THREE ENEMY STUFF    ///////////
-////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////
+	///////////   END LEVEL THREE ENEMY STUFF    ///////////
+	////////////////////////////////////////////////////////
 
 var bulletArray = [];
 
@@ -1271,8 +1333,8 @@ function onTick()
 {
 	doPhysics();
 	doGraphics();
-	
-	
+
+
 	if (!playingSound(music))
 	{
 		playSound(music);
@@ -1344,20 +1406,22 @@ function doPhysics()
 		var enemy = enemies[i]
 
 		enemy.fireTimer += deltaTime;
-
-		if (enemy.fireTimer >= enemy.fireRate)
+		if (!level.level3 || (level.level3 && i > 0))
 		{
-			enemy.fireTimer = 0.0;
-			var bullet;
-			if (enemy.shootDirection == "left")
+			if (enemy.fireTimer >= enemy.fireRate)
 			{
-				bullet = new createBullet(enemy.xPosition, enemy.yPosition, enemy.shootDirection, 250, "bad");
+				enemy.fireTimer = 0.0;
+				var bullet;
+				if (enemy.shootDirection == "left")
+				{
+					bullet = new createBullet(enemy.xPosition, enemy.yPosition, enemy.shootDirection, 250, "bad");
+				}
+				else
+				{
+					bullet = new createBullet(enemy.xPosition + 100, enemy.yPosition, enemy.shootDirection, 250, "bad");
+				}
+				bulletArray.push(bullet);
 			}
-			else
-			{
-				bullet = new createBullet(enemy.xPosition + 100, enemy.yPosition, enemy.shootDirection, 250, "bad");
-			}
-			bulletArray.push(bullet);
 		}
 	}
 
@@ -1490,7 +1554,7 @@ function platformCollisionDetection()
 				player.yVelocity = 0;
 				player.yPosition = world.yPosition + platform.yPosition + platform.height + player.imageHeight / 2;
 				hitSomething = true;
-			
+
 			}
 
 			// Player's right side collided with a platform
@@ -1665,17 +1729,30 @@ function coinCollisionDetection()
 function bulletCollisionDetection()
 {
 	var removalList = [];
-	
+
 	// Loop through all bullets, checking all bullets with all platforms, all enemies, and the player
 	for (var i = 0; i < bulletArray.length; ++i)
 	{
 		var bullet = bulletArray[i];
 
 		//Edges of the Bullet
-		var bulletTop = world.yPosition + bullet.yPosition - 5;
-		var bulletBottom = world.yPosition + bullet.yPosition + 5;
-		var bulletLeft = world.xPosition + bullet.xPosition - 10;
-		var bulletRight = world.xPosition + bullet.xPosition + 10;
+		if (bullet.direction == "left" || bullet.direction == "right")
+		{
+			var bulletTop = world.yPosition + bullet.yPosition - 5;
+			var bulletBottom = world.yPosition + bullet.yPosition + 5;
+			var bulletLeft = world.xPosition + bullet.xPosition - 10;
+			var bulletRight = world.xPosition + bullet.xPosition + 10;
+		}
+		else if (bullet.direction == "up" || bullet.direction == "down")
+		{
+			var bulletTop = world.yPosition + bullet.yPosition - 10;
+			var bulletBottom = world.yPosition + bullet.yPosition + 10;
+			var bulletLeft = world.xPosition + bullet.xPosition - 5;
+			var bulletRight = world.xPosition + bullet.xPosition + 5;
+		}
+
+
+
 
 		// Loops through all the platforms
 		for (var counter = 0; counter < platformArray.length; ++counter)
@@ -1730,9 +1807,19 @@ function bulletCollisionDetection()
 			{
 				if (bullet.origin == "good")
 				{
-					console.log("Hit!");
 					enemy.health -= 10;
-					if (!level.level3)
+					if (level.level3 && j == 0)
+					{
+						if (enemy.health <= 10)
+						{
+							boss.width = 350;
+							boss.height = 350;
+							boss.xPosition += 300;
+							boss.image = loadImage("images/explosion.png");
+							explosiondone = true;
+						}
+					}
+					else if (!level.level3 || (level.level3 && j > 0))
 					{
 						if (enemy.shootDirection == "right")
 						{
@@ -1747,15 +1834,15 @@ function bulletCollisionDetection()
 						}
 						if (enemy.shootDirection == "left")
 						{
-						if (enemy.health == 20)
-						{
-							enemy.image = loadImage("images/enemyleft20.png");
+							if (enemy.health == 20)
+							{
+								enemy.image = loadImage("images/enemyleft20.png");
+							}
+							if (enemy.health == 10)
+							{
+								enemy.image = loadImage("images/enemyleft10.png");
+							}
 						}
-						if (enemy.health == 10)
-						{
-							enemy.image = loadImage("images/enemyleft10.png");
-						}
-					}
 					}
 					removalList.push(bullet);
 					break;
@@ -1766,13 +1853,13 @@ function bulletCollisionDetection()
 
 	}
 
-	while(removalList.length != 0)
+	while (removalList.length != 0)
 	{
 		var bulletToRemove = removalList[0];
-		
-		for(var i = 0; i < bulletArray.length; ++i)
+
+		for (var i = 0; i < bulletArray.length; ++i)
 		{
-			if(bulletToRemove == bulletArray[i])
+			if (bulletToRemove == bulletArray[i])
 			{
 				bulletArray.splice(i, 1);
 				removalList.splice(0, 1);
@@ -1780,7 +1867,7 @@ function bulletCollisionDetection()
 			}
 		}
 	}
-	
+
 }
 // Checks for collision between two objects
 // Returns 0 if the objects didn't touch
@@ -1830,12 +1917,24 @@ function doGraphics()
 	checkLives();
 
 	isgameover();
+
 	// Draw Background
 	drawImage(backgroundImage, 0, 0, screenWidth, screenHeight);
 
 
 	if ((level.storylevel || level.level1 || level.level2 || level.level3) && !level.gameover)
 	{ //Any level
+		if (explosiondone)
+		{
+			explosionTimer += deltaTime;
+			if (explosionTimer > .2)
+			{
+				endExplosion(boss);
+				coins.push(spacehoney);
+				explosiondone = false;
+			}
+		}
+
 		// Draw Platforms
 		checkObjectiveStatus();
 		for (var counter = 0; counter < platformArray.length; ++counter)
@@ -1878,13 +1977,12 @@ function doGraphics()
 				}
 			}
 		}
-		
+
 		if (level.level1 && finishaddlevel1)
 		{
 			drawImage(lvl1finishimage, world.xPosition + 5500, world.yPosition + 400, 600, 600);
 		}
-		
-		//Draw Coins
+
 		// Update timer for coin animations
 		coinTemplate.animationTimer += deltaTime;
 
@@ -1917,6 +2015,13 @@ function doGraphics()
 			drawImage(coinTemplate.spriteSheet.image, world.xPosition + coin.xPosition, world.yPosition + coin.yPosition, coinTemplate.imageWidth,
 				coinTemplate.imageHeight, x, y, coinTemplate.spriteSheet.cellWidth, coinTemplate.spriteSheet.cellHeight);
 		}
+
+		if (level.level3)
+		{
+			bossTimer += deltaTime;
+			bossAttacks();
+		}
+
 		//Draw bullet
 		for (var i = 0; i < bulletArray.length; ++i)
 		{
@@ -1929,21 +2034,26 @@ function doGraphics()
 		{
 			var enemy = enemies[i]
 			drawImage(enemy.image, world.xPosition + enemy.xPosition, enemy.yPosition, enemy.width, enemy.height);
+
 		}
-		
+
+
 		if (player.yPosition > 1250)
 		{
-			if (level.level1){
+			if (level.level1)
+			{
 				player.yPosition = 935;
 			}
-			if (level.level2){
+			if (level.level2)
+			{
 				player.yPosition = 1130;
 			}
-			if (level.level3){
+			if (level.level3)
+			{
 				player.yPosition = 1100;
 			}
 		}
-		
+
 		if (!lvl1playerset && level.level1)
 		{
 			player.yVelocity = 0;
@@ -1953,14 +2063,14 @@ function doGraphics()
 		{
 			player.yVelocity = 0;
 			lvl2playerset = true;
-		}		
+		}
 		if (!lvl3playerset && level.level3)
 		{
 			player.yVelocity = 0;
 			lvl3playerset = true;
 		}
-		
-		
+
+
 		// Draw Player
 		// Update the animation timers
 		player.animationTimer += deltaTime;
@@ -2043,20 +2153,23 @@ function doGraphics()
 			fillText("Enemies Left: " + (9 - player.killCounter), 700, 70, makeColor(1, 1, 1), "bold 60px sans-serif", left, top);
 		}
 
-		
+
 		// Display health of boss
 		if (level.level3)
 		{
-			fillText("Boss Health: " + boss.health, 300, 70, makeColor(1, 0, 0), "bold 60px sans-serif", left, top);
+			if (boss.health > 0)
+			{
+				fillText("Boss Health: " + (boss.health - 10), 300, 70, makeColor(1, 0, 0), "bold 60px sans-serif", left, top);
+			}
 		}
-		
+
 		if (level.level1 || level.level2 || level.level3)
 		{
-		// Display amount of health
-		fillText("Health: " + player.health, screenWidth - 200, 70, makeColor(1, 1, 1), "bold 60px sans-serif", left, top);
+			// Display amount of health
+			fillText("Health: " + player.health, screenWidth - 200, 70, makeColor(1, 1, 1), "bold 60px sans-serif", left, top);
 
-		// Display lives left
-		fillText("Lives: " + player.lives, screenWidth - 550, 70, makeColor(1, 1, 1), "bold 60px sans-serif", left, top);
+			// Display lives left
+			fillText("Lives: " + player.lives, screenWidth - 550, 70, makeColor(1, 1, 1), "bold 60px sans-serif", left, top);
 		}
 
 		// // Draw touch buttons if on mobile
@@ -2065,7 +2178,7 @@ function doGraphics()
 			drawTouchKeys();
 		}
 	}
-	
+
 }
 
 ////////////////////////////////////////////////
@@ -2191,12 +2304,11 @@ function checkObjectiveStatus()
 {
 	if (level.storylevel)
 	{
-		if (enemies.length  == 1)
+		if (enemies.length == 1)
 		{
-			player.killCounter = 0; 
+			player.killCounter = 0;
 			level.storylevel = false;
 			level.prelevel1 = true;
-			console.log("enemieskilled");
 		}
 	}
 	if (level.level1)
@@ -2215,6 +2327,14 @@ function checkObjectiveStatus()
 			level.prelevel3 = true;
 		}
 	}
+	if (level.level3)
+	{
+		if (player.coinCounter > 0)
+		{
+			level.level3 = false;
+			level.credits = true;
+		}
+	}
 
 }
 
@@ -2231,12 +2351,20 @@ function checkPlayerHealth()
 			player.health = 30;
 			player.lives--;
 		}
-		if (level.level2 || level.level3)
+		if (level.level2)
 		{
 			world.xPosition = 0;
 			player.xPosition = 700;
 			player.yPosition = 1100;
 			player.health = 30;
+			player.lives--;
+		}
+		if (level.level3)
+		{
+			world.xPosition = 0;
+			player.xPosition = 700;
+			player.yPosition = 1100;
+			player.health = 50;
 			player.lives--;
 		}
 	}
@@ -2280,37 +2408,36 @@ function graphicLoader()
 	if (level.storylevel && !storylevelloaded)
 	{
 		backgroundImage = loadImage("images/storyScreen.png");
-		
+
 		platformArray.length = 0;
 		coins.length = 0;
 		enemies.length = 0;
-		
+
 		platformArray = platformArray.concat(prelevelplatformArray);
 		enemies = enemies.concat(storylevelenemies);
-		
+
 		player.xPosition = 1000;
-		player.yPosition = world.yPosition - 200;	
-	
+		player.yPosition = world.yPosition - 200;
+
 		storylevelloaded = true;
-	
+
 	}
-	
 	if (level.prelevel1 && !prelevel1loaded)
 	{
 		prelevel1timer += deltaTime;
-		
-		
+
+
 		backgroundImage = loadImage("images/level1intro.png");
-		
-		
+
+
 		platformArray.length = 0;
 		coins.length = 0;
 		enemies.length = 0;
 		platformArray = platformArray.concat(prelevelplatformArray);
-		
+
 		player.xPosition = 0;
-		player.yPosition = world.yPosition - 200;		
-		
+		player.yPosition = world.yPosition - 200;
+
 		if (prelevel1timer >= 5)
 		{
 			backgroundImage = loadImage("images/sky.png");
@@ -2334,17 +2461,17 @@ function graphicLoader()
 	if (level.prelevel2 && !prelevel2loaded)
 	{
 		prelevel2timer += deltaTime;
-		
+
 		backgroundImage = loadImage("images/level2intro.png");
-		
+
 		platformArray.length = 0;
 		coins.length = 0;
 		enemies.length = 0;
 		platformArray = platformArray.concat(prelevelplatformArray);
-		
+
 		player.xPosition = 0;
 		player.yPosition = world.yPosition - 200;
-		
+
 		if (prelevel2timer >= 5)
 		{
 			backgroundImage = loadImage("images/sky.png");
@@ -2368,27 +2495,60 @@ function graphicLoader()
 	if (level.prelevel3 && !prelevel3loaded)
 	{
 		prelevel3timer += deltaTime;
-		
+
 		backgroundImage = loadImage("images/level3intro.png");
 
 		platformArray.length = 0;
 		coins.length = 0;
 		enemies.length = 0;
 		platformArray = platformArray.concat(prelevelplatformArray);
-		
+
 		player.xPosition = 0;
 		player.yPosition = world.yPosition - 200;
-		
+
 		if (prelevel3timer >= 5)
 		{
 			backgroundImage = loadImage("images/sky.png");
 			level.prelevel3 = false;
 			level.level3 = true;
-			prelevel3loaded = true;		
+			prelevel3loaded = true;
 		}
 	}
 	if (level.level3 && !level3loaded)
 	{
+		player.coinCounter = 0;
+
+		coinTemplate = {
+			// The width of the image
+			imageWidth: 175,
+			// The height of the image
+			imageHeight: 175,
+			// Used for switching frames in an animation
+			animationTimer: 0,
+			// Tracks which frame we are currently on
+			frameCnt: 0,
+			// The coin's sprite sheet
+			spriteSheet:
+			{
+				// Coin sprites
+				image: loadImage("images/spacehoney.png"),
+				cellWidth: 50,
+				cellHeight: 50,
+				animations:
+				{
+					IDLE:
+					{
+						xStart: 0,
+						yStart: 0,
+						framesX: 1,
+						framesY: 1,
+						fps: 1,
+						numberOfFrames: 1
+					}
+				}
+			},
+		}
+
 		platformArray.length = 0;
 		coins.length = 0;
 		enemies.length = 0;
@@ -2402,8 +2562,100 @@ function graphicLoader()
 		player.yPosition = 1135;
 		level3loaded = true;
 	}
+	if (level.credits && !creditsloaded)
+	{
+		creditstimer += deltaTime;
+
+		backgroundImage = loadImage("images/credits.png");
+
+		platformArray.length = 0;
+		coins.length = 0;
+		enemies.length = 0;
+		platformArray = platformArray.concat(prelevelplatformArray);
+
+		player.xPosition = 0;
+		player.yPosition = world.yPosition - 200;
+
+		if (creditstimer >= 5)
+		{
+			location.reload();
+		}
+	}
+
 }
 
+function bossAttacks()
+{
+	//To prevent the boss from doing the same thing twice in a row
+	var first = false;
+	var second = false;
+	var third = false;
+	var fourth = false;
+
+
+	if (bossTimer >= 4)
+	{
+		var rand = randomInteger(7, 100, Math.random);
+		if (rand % 6 == 0 && !first) //Spawn first enemy
+		{
+			enemies.push(lvl3enemy1);
+
+			first = true;
+			second = false;
+			third = false;
+			fourth = false;
+
+
+
+			bossTimer = 0;
+		}
+		if (rand % 6 == 1 && !second) //Spawn second enemy
+		{
+
+			enemies.push(lvl3enemy2);
+
+			first = false;
+			second = true;
+			third = false;
+			fourth = false;
+
+
+
+			bossTimer = 0;
+		}
+		if (rand % 6 == 2 && !third) //Spawn third enemy
+		{
+			enemies.push(lvl3enemy3);
+
+			first = false;
+			second = false;
+			third = true;
+			fourth = false;
+
+
+
+			bossTimer = 0;
+		}
+		if (rand % 6 == 3 && !fourth) //Spawn fourth enemy
+		{
+			enemies.push(lvl3enemy4);
+
+			first = false;
+			second = false;
+			third = false;
+			fourth = true;
+
+
+			bossTimer = 0;
+		}
+
+	}
+}
+
+function endExplosion(boss)
+{
+	boss.health -= 10;
+}
 
 ////////////////////////////////////////////////
 /////////    End of Helper Functions    ////////
