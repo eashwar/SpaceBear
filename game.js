@@ -8,6 +8,8 @@ var jumpsound = loadSound("sounds/jump.mp3");
 // The background music
 var music = loadSound("sounds/bgm.mp3");
 
+defineFont("pressstart", "pressstart2p-webfont");
+
 var fanfare = loadSound("sounds/fanfare.mp3");
 var fanfareplay = false;
 
@@ -47,13 +49,13 @@ var world = {
 }
 
 var level = {
-	storylevel: true,
+	storylevel: false,
 	prelevel1: false,
 	level1: false,
 	prelevel2: false,
 	level2: false,
 	prelevel3: false,
-	level3: false,
+	level3: true,
 	credits: false,
 	gameover: false
 }
@@ -1725,10 +1727,13 @@ function coinCollisionDetection()
 			world.xPosition + coin.xPosition, world.xPosition + coin.xPosition + coinTemplate.imageWidth);
 
 		// If there is a collision
-		if (collision != 0)
+		if (collision != 0 )
 		{
 			player.coinCounter++;
-			playSound(coinSound, false);
+			if (!level.level3)
+			{
+				playSound(coinSound, false);
+			}
 			coins.splice(i, 1);
 			break;
 		}
@@ -1941,7 +1946,7 @@ function doGraphics()
 				endExplosion(boss);
 				coins.push(spacehoney);
 				enemies.length = 0;
-				bullets.length = 0;
+				bulletArray.length = 0;
 				explosiondone = false;
 				fanfareplay = true;
 				playSound(fanfare);
@@ -2144,26 +2149,26 @@ function doGraphics()
 		{
 			if (player.coinCounter < 25)
 			{
-				fillText("Coins Left: " + (25 - player.coinCounter), 300, 70, makeColor(1, 1, 1), "bold 60px sans-serif", left, top);
+				fillText("Coins Left:" + (25 - player.coinCounter), 300, 70, makeColor(1, 1, 1), "normal 35px pressstart", left, top);
 			}
 			else
 			{
-				fillText("Head for the entrance of the base!", 300, 50, makeColor(1, 1, 1), "bold 30px sans-serif", left, top);
+				fillText("Head for the entrance of the base!", 1000, 150, makeColor(1, 0, 0), "normal 35px pressstart", left, top);
 			}
 		}
 		if (level.level2)
 		{
-			fillText("Coins: " + player.coinCounter, 200, 70, makeColor(1, 1, 1), "bold 60px sans-serif", left, top);
+			fillText("Coins:" + player.coinCounter, 200, 70, makeColor(1, 1, 1), "normal 35px pressstart", left, top);
 		}
 
 		// Display amount of enemies
 		if (level.level1)
 		{
-			fillText("Enemies Killed: " + player.killCounter, 900, 70, makeColor(1, 1, 1), "bold 60px sans-serif", left, top);
+			fillText("Enemies Killed:" + player.killCounter, 900, 70, makeColor(1, 1, 1), "normal 35px pressstart", left, top);
 		}
 		if (level.level2)
 		{
-			fillText("Enemies Left: " + (9 - player.killCounter), 700, 70, makeColor(1, 1, 1), "bold 60px sans-serif", left, top);
+			fillText("Enemies Left:" + (9 - player.killCounter), 700, 70, makeColor(1, 1, 1), "normal 35px pressstart", left, top);
 		}
 
 
@@ -2172,17 +2177,17 @@ function doGraphics()
 		{
 			if (boss.health > 0)
 			{
-				fillText("Boss Health: " + (boss.health - 10), 300, 70, makeColor(1, 0, 0), "bold 60px sans-serif", left, top);
+				fillText("Boss Health:" + (boss.health - 10), 300, 70, makeColor(1, 0, 0), "normal 35px pressstart", left, top);
 			}
 		}
 
 		if (level.level1 || level.level2 || level.level3)
 		{
 			// Display amount of health
-			fillText("Health: " + player.health, screenWidth - 200, 70, makeColor(1, 1, 1), "bold 60px sans-serif", left, top);
+			fillText("Health:" + player.health, screenWidth - 200, 70, makeColor(1, 1, 1), "normal 35px pressstart", left, top);
 
 			// Display lives left
-			fillText("Lives: " + player.lives, screenWidth - 550, 70, makeColor(1, 1, 1), "bold 60px sans-serif", left, top);
+			fillText("Lives:" + player.lives, screenWidth - 550, 70, makeColor(1, 1, 1), "normal 35px pressstart", left, top);
 		}
 
 		// // Draw touch buttons if on mobile
