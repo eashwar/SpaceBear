@@ -49,13 +49,13 @@ var world = {
 }
 
 var level = {
-	storylevel: false,
+	storylevel: true,
 	prelevel1: false,
 	level1: false,
 	prelevel2: false,
 	level2: false,
 	prelevel3: false,
-	level3: true,
+	level3: false,
 	credits: false,
 	gameover: false
 }
