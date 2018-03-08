@@ -4,7 +4,7 @@ A 2D Platformer.
 This is a game featuring the galaxy's fiercest fighter, Space Bear! Infiltrate the alien base and take down the mother ship. Good luck!
 
 
-Uses [codeheart.js](codeheartjs.com).
+Uses [codeheart.js](https://casual-effects.com/codeheart/).
 
 To play, open `play.html` in your favorite web browser.
 
